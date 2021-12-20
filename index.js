@@ -108,15 +108,6 @@ function viewEmployees() {
   })
 }
 
-// function viewManagers() {
-//   db.query('SELECT * FROM employee WHERE (id in (SELECT manager_id FROM employee))', (err, managers) => {
-//     if (err) { console.log(err) }
-//     console.table(managers)
-//     start()
-//   })
-// }
-
-
 // Add Functions
 function addDepartments() {
   inquirer.prompt([
@@ -179,11 +170,11 @@ function addEmployees() {
       name: 'roles_id',
       message: `What is the new employee's role ID?`
     },
-    // {
-    //   type: 'validate',
-    //   name: 'manager_id',
-    //   message: `Does this employee have a manager?`
-    // }
+    {
+      type: 'input',
+      name: 'manager_id',
+      message: `Assign Manager ID if employee is manager, if not assign 0.`
+    }
   ])
     .then(newEmployee => {
       db.query('INSERT INTO employee SET ?', newEmployee, err => {
