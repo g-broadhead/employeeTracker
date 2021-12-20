@@ -14,7 +14,7 @@ const start = () => {
     {
       type: 'list',
       message: "What would you like to do?",
-      choices: ['Add Department(s)', 'Add Role(s)', 'Add Employee(s)', 'View Department(s)', 'View Role(s)', 'View Employee(s)', 'Update Employee Role(s)', 'Update Employee Manager(s)', 'View Employee(s) by Manager', 'Remove Department(s)', 'Remove Role(s)', 'Remove Employee(s)', 'View Total Utilized Budget', 'Leave'],
+      choices: ['Add Department(s)', 'Add Role(s)', 'Add Employee(s)', 'View Department(s)', 'View Role(s)', 'View Employee(s)', 'Update Employee Role(s)', 'Remove Department(s)', 'Remove Role(s)', 'Remove Employee(s)', 'Leave'],
       name: 'todo'
     },
   ])
