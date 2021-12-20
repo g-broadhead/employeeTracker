@@ -48,29 +48,29 @@ const start = () => {
           updateRoles();
           break;
 
-        case 'Update Employee Manager(s)':
-          // updateManagers();
-          break;
+        // case 'Update Employee Manager(s)':
+        //   // updateManagers();
+        //   break;
 
-        case 'View Employee(s) by Manager':
-          // viewManagers();
-          break;
+        // case 'View Employee(s) by Manager':
+        //   viewManagers();
+        //   break;
 
         case 'Remove Department(s)':
           removeDepartment();
           break;
 
-        case 'Remove Roles(s)':
+        case 'Remove Role(s)':
           removeRoles();
           break;
 
         case 'Remove Employee(s)':
-          // removeEmployees();
+          removeEmployees();
           break;
 
-        case 'View Total Utilized Budget':
-          // viewBudget();
-          break;
+        // case 'View Total Utilized Budget':
+        //   // viewBudget();
+        //   break;
 
         case 'Leave':
           leave();
@@ -109,9 +109,9 @@ function viewEmployees() {
 }
 
 // function viewManagers() {
-//   db.query('SELECT * FROM employee WHERE ? manager_id', (err, employee) => {
+//   db.query('SELECT * FROM employee WHERE (id in (SELECT manager_id FROM employee))', (err, managers) => {
 //     if (err) { console.log(err) }
-//     console.table(employee)
+//     console.table(managers)
 //     start()
 //   })
 // }
@@ -178,7 +178,12 @@ function addEmployees() {
       type: 'input',
       name: 'roles_id',
       message: `What is the new employee's role ID?`
-    }
+    },
+    // {
+    //   type: 'validate',
+    //   name: 'manager_id',
+    //   message: `Does this employee have a manager?`
+    // }
   ])
     .then(newEmployee => {
       db.query('INSERT INTO employee SET ?', newEmployee, err => {
@@ -194,24 +199,29 @@ function updateRoles() {
   db.query('SELECT * FROM employee', (err, employee) => {
     if (err) { console.log(err) }
     console.table(employee)
-    inquirer.prompt([
-      {
-        type: 'input',
-        message: 'What is the ID of the employee?',
-        name: 'id'
-      },
-      {
-        type: 'input',
-        message: 'What is the new Role ID for the employee',
-        name: 'roles_id'
-      }
-    ])
-      .then(updateEmployee => {
-        db.query('UPDATE employee SET ? WHERE ?', [{ roles_id: updateEmployee.roles_id }, { ID: updateEmployee.id }], () => {
-          console.log('The employee role has been updated.')
-          start()
+    console.log("-----------------------------------------------")
+    db.query('SELECT * FROM roles', (err, roles) => {
+      if (err) { console.log(err) }
+      console.table(roles)
+      inquirer.prompt([
+        {
+          type: 'input',
+          message: 'What is the ID of the employee?',
+          name: 'id'
+        },
+        {
+          type: 'input',
+          message: 'What is the new Role ID for the employee',
+          name: 'roles_id'
+        }
+      ])
+        .then(updateEmployee => {
+          db.query('UPDATE employee SET ? WHERE ?', [{ roles_id: updateEmployee.roles_id }, { id: updateEmployee.id }], () => {
+            console.log('The employee role has been updated.')
+            start()
+          })
         })
-      })
+    })
   })
 }
 
@@ -245,11 +255,11 @@ function removeRoles() {
       {
         type: 'input',
         name: 'ID',
-        message: 'Enter Role ID of department that needs to be removed.'
+        message: 'Enter Role ID of role that needs to be removed.'
       }
     ])
       .then(removeRole => {
-        db.query('DELETE FROM roles WHERE ?', removeDept, err => {
+        db.query('DELETE FROM roles WHERE ?', removeRole, err => {
           if (err) { console.log(err) }
           console.log(`Role has been removed!`)
           start()
@@ -258,6 +268,26 @@ function removeRoles() {
   })
 }
 
+function removeEmployees() {
+  db.query('SELECT * FROM employee', (err, employee) => {
+    if (err) { console.log(err) }
+    console.table(employee)
+    inquirer.prompt([
+      {
+        type: 'input',
+        name: 'ID',
+        message: 'Enter Employee ID of employee that needs to be removed.'
+      }
+    ])
+      .then(removeEmp => {
+        db.query('DELETE FROM employee WHERE ?', removeEmp, err => {
+          if (err) { console.log(err) }
+          console.log(`Employee has been removed!`)
+          start()
+        })
+      })
+  })
+}
 
 
 // Leave Function
