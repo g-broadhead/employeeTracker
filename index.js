@@ -22,72 +22,58 @@ const start = () => {
       switch (answers.todo) {
         case 'Add Department(s)':
           addDepartments();
-          console.log(answers.todo)
           break;
 
         case 'Add Role(s)':
           addRoles();
-          console.log(answers.todo)
           break;
 
         case 'Add Employee(s)':
           addEmployees();
-          console.log(answers.todo)
           break;
 
         case 'View Department(s)':
           viewDepartments();
-          console.log(answers.todo)
           break;
 
         case 'View Role(s)':
           viewRoles();
-          console.log(answers.todo)
           break;
 
-        case 'View Employees(s)':
+        case 'View Employee(s)':
           viewEmployees();
-          console.log(answers.todo)
           break;
 
         case 'Update Employee Role(s)':
-          // updateRoles();
-          console.log(answers.todo)
+          updateRoles();
           break;
 
         case 'Update Employee Manager(s)':
           // updateManagers();
-          console.log(answers.todo)
           break;
 
         case 'View Employee(s) by Manager':
           // viewManagers();
-          console.log(answers.todo)
           break;
 
         case 'Remove Department(s)':
-          // removeDepartments();
-          console.log(answers.todo)
+          removeDepartment();
           break;
 
         case 'Remove Roles(s)':
-          // removeRoles();
-          console.log(answers.todo)
+          removeRoles();
           break;
 
         case 'Remove Employee(s)':
           // removeEmployees();
-          console.log(answers.todo)
           break;
 
         case 'View Total Utilized Budget':
           // viewBudget();
-          console.log(answers.todo)
           break;
 
         case 'Leave':
-          // leave();
-          console.log(answers.todo)
+          leave();
           break;
 
       }
@@ -122,13 +108,14 @@ function viewEmployees() {
   })
 }
 
-function viewManagers() {
-  db.query('SELECT * FROM employee WHERE ? manager_id', (err, employee) => {
-    if (err) { console.log(err) }
-    console.table(employee)
-    start()
-  })
-}
+// function viewManagers() {
+//   db.query('SELECT * FROM employee WHERE ? manager_id', (err, employee) => {
+//     if (err) { console.log(err) }
+//     console.table(employee)
+//     start()
+//   })
+// }
+
 
 // Add Functions
 function addDepartments() {
@@ -140,9 +127,9 @@ function addDepartments() {
     }
   ])
     .then(newDepartment => {
-      db.query('INSERT INTO department SET ?', newDepartment, err => {
+      db.query('INSERT INTO department SET name= ?', newDepartment.name, err => {
         if (err) { console.log(err) }
-        console.log(`${newDepartment} has been added!`)
+        console.log(`${newDepartment.name} has been added!`)
         start()
       })
     })
@@ -152,7 +139,7 @@ function addRoles() {
   inquirer.prompt([
     {
       type: 'input',
-      name: 'name',
+      name: 'title',
       message: 'Name of new role.'
     },
     {
@@ -169,7 +156,7 @@ function addRoles() {
     .then(newRole => {
       db.query('INSERT INTO roles SET ?', newRole, err => {
         if (err) { console.log(err) }
-        console.log(`${newRole} has been added!`)
+        console.log(`${newRole.title} has been added!`)
         start()
       })
     })
@@ -188,7 +175,7 @@ function addEmployees() {
       message: 'What is the LAST name of the employee?'
     },
     {
-      type: 'list',
+      type: 'input',
       name: 'roles_id',
       message: `What is the new employee's role ID?`
     }
@@ -196,8 +183,87 @@ function addEmployees() {
     .then(newEmployee => {
       db.query('INSERT INTO employee SET ?', newEmployee, err => {
         if (err) { console.log(err) }
-        console.log(`${newEmployee} has been added!`)
+        console.log(`${newEmployee.first_name} ${newEmployee.last_name} has been added!`)
         start()
       })
     })
+}
+
+// Update Functions
+function updateRoles() {
+  db.query('SELECT * FROM employee', (err, employee) => {
+    if (err) { console.log(err) }
+    console.table(employee)
+    inquirer.prompt([
+      {
+        type: 'input',
+        message: 'What is the ID of the employee?',
+        name: 'id'
+      },
+      {
+        type: 'input',
+        message: 'What is the new Role ID for the employee',
+        name: 'roles_id'
+      }
+    ])
+      .then(updateEmployee => {
+        db.query('UPDATE employee SET ? WHERE ?', [{ roles_id: updateEmployee.roles_id }, { ID: updateEmployee.id }], () => {
+          console.log('The employee role has been updated.')
+          start()
+        })
+      })
+  })
+}
+
+// Remove Functions
+function removeDepartment() {
+  db.query('SELECT * FROM department', (err, department) => {
+    if (err) { console.log(err) }
+    console.table(department)
+    inquirer.prompt([
+      {
+        type: 'input',
+        name: 'name',
+        message: 'Enter NAME of department that needs to be removed.'
+      }
+    ])
+      .then(removeDept => {
+        db.query('DELETE FROM department WHERE ?', removeDept, err => {
+          if (err) { console.log(err) }
+          console.log(`Department has been removed!`)
+          start()
+        })
+      })
+  })
+}
+
+function removeRoles() {
+  db.query('SELECT * FROM roles', (err, roles) => {
+    if (err) { console.log(err) }
+    console.table(roles)
+    inquirer.prompt([
+      {
+        type: 'input',
+        name: 'ID',
+        message: 'Enter Role ID of department that needs to be removed.'
+      }
+    ])
+      .then(removeRole => {
+        db.query('DELETE FROM roles WHERE ?', removeDept, err => {
+          if (err) { console.log(err) }
+          console.log(`Role has been removed!`)
+          start()
+        })
+      })
+  })
+}
+
+
+
+// Leave Function
+function leave() {
+  console.log('Process Ended')
+  setTimeout((function () {
+    return process.exit(20);
+  }), 1000);
 }
