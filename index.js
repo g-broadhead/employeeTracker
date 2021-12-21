@@ -171,9 +171,9 @@ function addEmployees() {
       message: `What is the new employee's role ID?`
     },
     {
-      type: 'input',
+      type: 'number',
       name: 'manager_id',
-      message: `Assign Manager ID if employee is manager, if not assign 0.`
+      message: `Assign Manager ID.`
     }
   ])
     .then(newEmployee => {
@@ -245,7 +245,7 @@ function removeRoles() {
     inquirer.prompt([
       {
         type: 'input',
-        name: 'ID',
+        name: 'id',
         message: 'Enter Role ID of role that needs to be removed.'
       }
     ])
@@ -266,7 +266,7 @@ function removeEmployees() {
     inquirer.prompt([
       {
         type: 'input',
-        name: 'ID',
+        name: 'id',
         message: 'Enter Employee ID of employee that needs to be removed.'
       }
     ])
@@ -281,10 +281,10 @@ function removeEmployees() {
 }
 
 
-// Leave Function
+// End Process Function
 function leave() {
   console.log('Process Ended')
   setTimeout((function () {
     return process.exit(20);
   }), 1000);
-}
+} 
